@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+
+# pyClearURLs
+# Copyright (c) 2020 pilate
+# Copyright (c) 2020-present Marco Romanelli
+# See LICENSE for details.
+
 from collections import defaultdict
 from urllib.parse import unquote
 import re
