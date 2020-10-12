@@ -10,7 +10,7 @@ Git to clone the repository from GitHub to install the latest development versio
 
 ```bash
 git clone https://github.com/mromanelli9/pyclearurls
-cd tweepy
+cd pyclearurls
 pip install .
 ```
 
