@@ -2,38 +2,32 @@ from collections import defaultdict
 from urllib.parse import unquote
 import re
 
-
 URL_RE = re.compile("\\?.*")
 QUERY_RE = re.compile(".*?\\?")
 FINAL_RE = re.compile("[^\\/|\\?|&]+=[^\\/|\\?|&]+")
-
 
 class URLCleaner(object):
 
     def __init__(self, database):
         self.compile_rules(database)
-        self.group_to_provider = {}
-
 
     def compile_rules(self, database):
         self.compiled = defaultdict(lambda: defaultdict(list))
 
-        for provider, rules in database.get("providers", {}).items():
-            pattern = rules["urlPattern"]
+        for _, rules in database.get("providers", {}).items():
+            pattern = rules.get("urlPattern", {})
 
             current = self.compiled[re.compile(pattern)]
-            for query_rule in (rules["rules"] + rules["referralMarketing"]):
+            for query_rule in (rules.get("rules", []) + rules.get("referralMarketing", [])):
                 rule_re = re.compile("([\\/|\\?]|(&|&amp;))("+query_rule+"=[^\\/|\\?|&]*)")
                 current["param_rules"].append(rule_re)
 
-            current["exceptions"] = list(map(re.compile, rules["exceptions"]))
-            current["redirections"] = list(map(re.compile, rules["redirections"]))
-            current["full_rules"] = list(map(re.compile, rules["rawRules"]))
-
+            current["exceptions"] = list(map(re.compile, rules.get("exceptions", [])))
+            current["redirections"] = list(map(re.compile, rules.get("redirections", [])))
+            current["full_rules"] = list(map(re.compile, rules.get("rawRules", [])))
 
     def find_providers(self, url):
         return filter(bool, map(lambda r: r.match(url), self.compiled))
-
 
     def apply_provider(self, url, provider):
         domain = URL_RE.sub("", url)
@@ -57,27 +51,13 @@ class URLCleaner(object):
 
         final_fields = FINAL_RE.findall(fields)
         if len(final_fields):
-            return domain + "?" + "&".join(final_fields);
+            return domain + "?" + "&".join(final_fields)
 
         return domain
 
-
     def clean(self, url):
         providers = self.find_providers(url)
-        # print(list(providers))
         for provider in providers:
             url = self.apply_provider(url, provider)
 
         return url
-
-
-def test():
-    print(c.clean("http://www.amazon.com/gp/navigation/redirector.html/?tag=5"))
-    # test rules
-    assert c.clean("https://www.amazon.com/?pf_rd_f=5") == "https://www.amazon.com/"
-    # test referralMarketing
-    assert c.clean("https://www.amazon.com/?tag=5") == "https://www.amazon.com/"
-    # test excludes
-    assert c.clean("http://www.amazon.com/gp/navigation/redirector.html/?tag=5") == "http://www.amazon.com/gp/navigation/redirector.html/?tag=5"
-    # test rawRules
-    assert c.clean("https://www.amazon.com/dp/exampleProduct/ref=sxin_0_pb?__mk_de_DE=dsa") == "https://www.amazon.com/dp/exampleProduct"
