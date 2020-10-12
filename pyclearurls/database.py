@@ -6,22 +6,21 @@
 
 import logging
 
-from os.path import join, isfile, isdir
+import sys
+from os.path import join, isfile, isdir, dirname
 from os import mkdir
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 import tempfile
 import json
 
-from pyclearurls.utils import get_project_root
-
 logger = logging.getLogger(__name__)
 
 RULES_URL = "https://gitlab.com/KevinRoebert/ClearUrls/raw/master/data/data.min.json"
-RULES_DIR = join(get_project_root(), ".pyclearurls")
+RULES_DIR = join(sys.path[0], ".pyclearurls")
 RULES_FILENAME = "data.min.json"
 
-def get_database():
+def download_database():
     # Check if database file exists
     filname = join(RULES_DIR, RULES_FILENAME)
     if isfile(filname):

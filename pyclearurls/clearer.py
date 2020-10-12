@@ -9,13 +9,24 @@ from collections import defaultdict
 from urllib.parse import unquote
 import re
 
+from .database import download_database
+
 URL_RE = re.compile("\\?.*")
 QUERY_RE = re.compile(".*?\\?")
 FINAL_RE = re.compile("[^\\/|\\?|&]+=[^\\/|\\?|&]+")
 
-class URLCleaner(object):
+class URLCleaner:
 
-    def __init__(self, database):
+    def __init__(self, database=None):
+        if database is None:
+            database = download_database()
+
+            # If we couldn't get the database,
+            # abort with error
+            if not database:
+                raise ValueError("Is not possible to download the database. "\
+                    "See the logs for more info.")
+
         self.compile_rules(database)
 
     def compile_rules(self, database):
