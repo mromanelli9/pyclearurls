@@ -21,6 +21,12 @@ RULES_DIR = join(sys.path[0], ".pyclearurls")
 RULES_FILENAME = "data.min.json"
 
 def download_database():
+    """Utility function that downloads ClearURLs rules.
+    It stores the rule file on disk to speed up further accesses.
+
+    :return: ClearURLs rules
+    :rtype: dict
+    """
     # Check if database file exists
     filname = join(RULES_DIR, RULES_FILENAME)
     if isfile(filname):
