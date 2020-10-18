@@ -1,8 +1,9 @@
 # pyClearURLs
 
-ClearURLs in Python, based on [pilate's work](https://github.com/pilate/pyclearurls).
+Python implementation of [ClearURLs](https://gitlab.com/KevinRoebert/ClearUrls) add-on,
+based on [pilate's work](https://github.com/pilate/pyclearurls).
 
-Rules can be found here: [ClearURLs Rules](https://github.com/ClearURLs/Rules).
+Rules can be found here: [ClearURLs Rules](https://gitlab.com/KevinRoebert/ClearUrls/raw/master/data/data.min.json).
 
 ## Installation
 
