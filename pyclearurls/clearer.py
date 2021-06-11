@@ -8,8 +8,11 @@
 from collections import defaultdict
 from urllib.parse import unquote
 import re
+import json
+import os.path
 
-from .database import download_database
+PATH_PACKAGE_DATA = os.path.join(os.path.dirname(os.path.realpath(__file__)), "package_data")
+PATH_RULESETS = os.path.join(PATH_PACKAGE_DATA, "data.min.json")
 
 URL_RE = re.compile("\\?.*")
 QUERY_RE = re.compile(".*?\\?")
@@ -26,17 +29,10 @@ class URLCleaner:
     :raises ValueError: When the database is not provided
     """
 
-    def __init__(self, database=None):
-        """Constructor method
-        """
-        if database is None:
-            database = download_database()
-
-        # If we couldn't get the database,
-        # abort with error
-        if not database:
-            raise ValueError("Is not possible to download the database. "\
-                "See the logs for more info.")
+    def __init__(self):
+        """Constructor method. """
+        with open(PATH_RULESETS, "r") as infile:
+            database = json.load(infile)
 
         self._compile_rules(database)
 

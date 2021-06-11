@@ -30,5 +30,6 @@ setup(
         "Source Code": "https://github.com/mromanelli9/pyclearurls",
     },
     packages=find_packages(exclude=["tests", "examples"]),
-    zip_safe=False
+    include_package_data=True,
+    package_data={'': ['package_data/data.min.json']},
 )
